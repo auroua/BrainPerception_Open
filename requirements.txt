@@ -1,0 +1,60 @@
+# BrainPerception dependencies
+#
+# Install with:
+#     pip install -r requirements.txt
+#
+# Notes
+# -----
+# * Tested with Python 3.12.
+# * Versions are pinned to the actual `brain` training/inference environment
+#   (transformers 5.12.1, torch 2.7.1+cu128). The SAM 2 / Qwen3-VL wrappers in the
+#   code were made robust to this transformers build (5.x), so it is pinned exactly.
+# * Transitive deps (tokenizers 0.22.2, huggingface_hub 1.21.0, safetensors 0.8.0,
+#   hf-xet, ...) are resolved automatically from the pinned transformers/torch and
+#   are intentionally not listed here.
+# * torch/torchvision are pinned WITHOUT the `+cu128` local tag so this file installs
+#   from PyPI; install the build matching YOUR CUDA from
+#   https://pytorch.org/get-started/locally/ (the env used the CUDA 12.8 wheels).
+
+# --- core deep-learning stack ---
+torch==2.7.1
+torchvision==0.22.1
+
+# --- LLM / VLM branch (Qwen3-VL + LoRA) ---
+transformers==5.12.1       # exposes Qwen3VLForConditionalGeneration / Sam2Model; code targets this build
+peft==0.19.1               # LoRA wrapping of the LLM
+accelerate==1.14.0         # (multi-)GPU training loop + mixed precision
+qwen-vl-utils==0.0.14      # process_vision_info, required by the Qwen3-VL collator
+modelscope>=1.20           # optional VLM source: train/infer with --vlm_source modelscope
+
+# --- experiment logging (optional; enabled by train --wandb) ---
+wandb==0.28.0
+
+# --- imaging / data prep ---
+nibabel==5.4.2             # NIfTI volume I/O (dataset steps 1-2)
+numpy==2.3.5
+pandas==3.0.0
+Pillow==12.1.1             # PNG slice / mask I/O
+matplotlib==3.10.8         # visualization scripts
+tqdm==4.67.3
+
+terminado==0.18.1
+xformers==0.0.31
+
+einops==0.8.2
+numba==0.63.1
+
+# --- optional ---
+# einops is present in the env (transitive); the flow-matching / diffusion model
+# (src/training + third_party/flow_matching) also needs torchmetrics + torchdiffeq,
+# which are NOT installed in the brain env and are NOT needed for BrainPerception
+# training or inference. Uncomment only if you use that path.
+# einops==0.8.2
+# torchmetrics>=1.0
+# torchdiffeq>=0.2.4
+
+# --- SAM mask head ---
+# SAM 2 (default that works out of the box): loaded via transformers.Sam2Model, no
+#   extra install needed — run training/inference with `--sam_version sam2`.
+# SAM 3: Meta's package (not on PyPI). Install and use `--sam_version sam3`:
+# sam3 @ git+https://github.com/facebookresearch/sam3
