@@ -319,9 +319,3 @@ different server:
 - **`tools_evaluate.py`** currently applies a **hardcoded** remap inside its loop (the two
   `item[...].replace(...)` lines) — edit those to your paths, or make the manifest already
   hold local paths.
-
-
-### Contact
-Chen Wei
-
-email: weichen@xupt.edu.cn
